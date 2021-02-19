@@ -76,7 +76,13 @@ const config = {
 };
 
 module.exports = (env, argv) => {
-    // const devMode = argv.mode === 'development';
-    // config.output.publicPath = devMode ? '/' : '/publicPath/';
+    const devMode = argv.mode === 'development';
+    config.output.publicPath = devMode ? '/' : '/svg-experiments/';
+    config.plugins.push(
+        new FaviconsWebpackPlugin({
+            logo: './source/img/logo.svg',
+            mode: devMode ? 'light' : 'webapp'
+        })
+    );
     return config;
 }
