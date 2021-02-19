@@ -5,19 +5,28 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const pageList = [
-    'index',
-    'triangle_interpolation'
+    {
+        name: 'index'
+    },
+    {
+        name: 'triangle_interpolation',
+        additionalChunks: ['triangleInterpolation']
+    }
 ];
 
-const pages = pageList.map((pageName) => {
+const pages = pageList.map((page) => {
     return new HtmlWebpackPlugin({
-        filename: pageName + '.html',
-        template: './source/pages/' + pageName + '.pug',
+        filename: page.name + '.html',
+        template: './source/pages/' + page.name + '.pug',
+        chunks: ['main'].concat(page.additionalChunks)
     })
 });
 
 const config = {
-    entry: './source/code/main.ts',
+    entry: {
+        main: './source/code/main.ts',
+        triangleInterpolation: './source/code/triangleInterpolation.ts'
+    },
     devtool: 'inline-source-map',
     mode: 'development',
     module: {
