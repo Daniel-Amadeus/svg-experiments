@@ -5,7 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const pageList = [
-    'index'
+    'index',
+    'triangle_interpolation'
 ];
 
 const pages = pageList.map((pageName) => {
