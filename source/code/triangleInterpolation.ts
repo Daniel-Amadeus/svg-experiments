@@ -12,31 +12,15 @@ window.addEventListener('load', () => {
     const controlsContainer = document.getElementById('svg-controls');
     const controls = new Controls(controlsContainer);
 
-    const colorInput1 = controls.createColorInput(
-        'Color 1'
-    );
-    colorInput1.value = colors[0];
-    colorInput1.addEventListener('input', (event: InputEvent) => {
-        colors[0] = (event.target as HTMLInputElement).value;
-        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
-    });
-
-    const colorInput2 = controls.createColorInput(
-        'Color 2'
-    );
-    colorInput2.value = colors[1];
-    colorInput2.addEventListener('input', (event: InputEvent) => {
-        colors[1] = (event.target as HTMLInputElement).value;
-        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
-    });
-
-    const colorInput3 = controls.createColorInput(
-        'Color 3'
-    );
-    colorInput3.value = colors[2];
-    colorInput3.addEventListener('input', (event: InputEvent) => {
-        colors[2] = (event.target as HTMLInputElement).value;
-        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
+    colors.forEach((color, index) => {
+        const colorInput1 = controls.createColorInput(
+            'Color ' + (index + 1)
+        );
+        colorInput1.value = color;
+        colorInput1.addEventListener('input', (event: InputEvent) => {
+            colors[index] = (event.target as HTMLInputElement).value;
+            generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
+        });
     });
 
     generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
