@@ -103,7 +103,7 @@ const generateBlurSVG = (
 
     const defs = `
         <filter id="blur">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.05" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.2" />
         </filter>
         <path id="triangle" fill="#000" d="M 0 0 h 1 l -0.5 0.866 Z"/>
         <path id="segment" d="M 0.5 0.289 L 0.5 -0.577 L -1 -0.577 L -0.25 0.722 Z" />
