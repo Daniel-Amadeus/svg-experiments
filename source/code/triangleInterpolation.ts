@@ -1,4 +1,5 @@
 import { Controls } from './uiHelper';
+import format from 'xml-formatter';
 
 window.addEventListener('load', () => {
     console.log('triangleInterpolation.ts');
@@ -49,9 +50,8 @@ const generateAndSetSVG = (
     color2: string,
     color3: string
 ) => {
-    const svg = generateSVG(color1, color2, color3);
-
-    svgCodeContainer.textContent = svg;
+    const svg = generateSVG(color1, color2, color3);    
+    svgCodeContainer.innerText = format(svg);
     svgPreviewContainer.innerHTML = svg;
 }
 
