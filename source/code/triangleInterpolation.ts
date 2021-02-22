@@ -2,7 +2,9 @@ import { Controls } from './uiHelper';
 import format from 'xml-formatter';
 
 window.addEventListener('load', () => {
-    console.log('triangleInterpolation.ts');
+
+    let mouseDown = false;
+    let selectedPoint = -1;
 
     let colors = ['#ff0000', '#00ff00', '#0000ff'];
     let points = [[50, 50], [250, 0], [200, 100]];
@@ -23,6 +25,41 @@ window.addEventListener('load', () => {
         });
     });
 
+    svgPreviewContainer.addEventListener('mousedown', (event: MouseEvent) => {
+        mouseDown = true;
+        let  rect = svgPreviewContainer.getBoundingClientRect();
+        const offsetX = event.clientX - rect.left;
+        const offsetY = event.clientY - rect.top;
+        
+        let shortestDistance = Infinity;
+        points.forEach((point, index) => {
+            const distance = Math.pow(point[0] - offsetX, 2) + Math.pow(point[1] - offsetY, 2);
+            if(distance < shortestDistance) {
+                selectedPoint = index;
+                shortestDistance = distance;
+            }
+        })
+    })
+
+    svgPreviewContainer.addEventListener('mouseup', () => {
+        mouseDown = false;
+        selectedPoint = -1;
+    })
+
+    svgPreviewContainer.addEventListener('mousemove', (event: MouseEvent) => {
+        if(selectedPoint < 0) {
+            return;
+        }
+        
+        let  rect = svgPreviewContainer.getBoundingClientRect();
+        points[selectedPoint][0] = event.clientX - rect.left;
+        points[selectedPoint][1] = event.clientY - rect.top;
+
+        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
+        
+
+    })
+
     generateAndSetSVG(svgCodeContainer, svgPreviewContainer, colors, points);
 })
 
@@ -41,7 +78,6 @@ const generateSVG = (
     colors: string[],
     points: number[][]
     ) => {
-    console.log('generateSVG()');
     return generateBlurSVG(colors, points);
 }
 
@@ -49,8 +85,6 @@ const generateBlurSVG = (
     colors: string[],
     points: number[][]
     ) => {
-    console.log('generateBlurSVG()');
-
     const m = points[0][0];
     const n = points[0][1];
     const o = points[1][0];
@@ -92,7 +126,7 @@ const generateBlurSVG = (
     `;
 
     let svg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="610" height="510">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
 <defs>
 ${defs}
 </defs>
