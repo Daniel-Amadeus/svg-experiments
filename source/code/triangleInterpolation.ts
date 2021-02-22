@@ -4,6 +4,8 @@ window.addEventListener('load', () => {
     console.log('triangleInterpolation.ts');
 
     let color1 = '#ff0000';
+    let color2 = '#00ff00';
+    let color3 = '#0000ff';
 
     const svgCodeContainer = document.getElementById('svg-code');
     const svgPreviewContainer = document.getElementById('svg-preview');
@@ -16,29 +18,57 @@ window.addEventListener('load', () => {
     colorInput1.value = color1;
     colorInput1.addEventListener('input', (event: InputEvent) => {
         color1 = (event.target as HTMLInputElement).value;
-        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1);
+        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1, color2, color3);
     });
 
-    generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1);
+    const colorInput2 = controls.createColorInput(
+        'Color 2'
+    );
+    colorInput2.value = color2;
+    colorInput2.addEventListener('input', (event: InputEvent) => {
+        color2 = (event.target as HTMLInputElement).value;
+        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1, color2, color3);
+    });
+
+    const colorInput3 = controls.createColorInput(
+        'Color 3'
+    );
+    colorInput3.value = color3;
+    colorInput3.addEventListener('input', (event: InputEvent) => {
+        color3 = (event.target as HTMLInputElement).value;
+        generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1, color2, color3);
+    });
+
+    generateAndSetSVG(svgCodeContainer, svgPreviewContainer, color1, color2, color3);
 })
 
 const generateAndSetSVG = (
     svgCodeContainer: HTMLElement,
     svgPreviewContainer: HTMLElement,
-    color1: string
+    color1: string,
+    color2: string,
+    color3: string
 ) => {
-    const svg = generateSVG(color1);
+    const svg = generateSVG(color1, color2, color3);
 
     svgCodeContainer.textContent = svg;
     svgPreviewContainer.innerHTML = svg;
 }
 
-const generateSVG = (color1: string) => {
+const generateSVG = (
+    color1: string,
+    color2: string,
+    color3: string
+    ) => {
     console.log('generateSVG()');
-    return generateBlurSVG(color1);
+    return generateBlurSVG(color1, color2, color3);
 }
 
-const generateBlurSVG = (color1: string) => {
+const generateBlurSVG = (
+    color1: string,
+    color2: string,
+    color3: string
+    ) => {
     console.log('generateBlurSVG()');
     const defs = `
         <filter id="blur">
@@ -51,8 +81,8 @@ const generateBlurSVG = (color1: string) => {
         </clipPath>
         <g id="segments">
             <use href="#segment" fill="${color1}"/>
-            <use href="#segment" fill="#0f0" transform="rotate(120 0.5 0.289)"/>
-            <use href="#segment" fill="#00f" transform="rotate(240 0.5 0.289)"/>
+            <use href="#segment" fill="${color2}" transform="rotate(120 0.5 0.289)"/>
+            <use href="#segment" fill="${color3}" transform="rotate(240 0.5 0.289)"/>
         </g>
     `;
 
