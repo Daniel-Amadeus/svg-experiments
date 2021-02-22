@@ -49,7 +49,7 @@ const generateAndSetSVG = (
     points: number[][]
 ) => {
     const svg = generateSVG(colors, points);    
-    svgCodeContainer.innerText = format(svg);
+    svgCodeContainer.innerText = format(svg, {indentation: '  '});
     svgPreviewContainer.innerHTML = svg;
 }
 
