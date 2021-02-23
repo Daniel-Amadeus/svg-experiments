@@ -1,5 +1,8 @@
 extends partials/layout.pug
 
+block head
+    link(rel='stylesheet' type='text/css' href=require('highlight.js/styles/stackoverflow-light.css'))
+
 block content
     .content.container
         h3 Triangle Interpolation

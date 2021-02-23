@@ -1,6 +1,19 @@
 import { Controls } from './uiHelper';
 import format from 'xml-formatter';
 
+const hljs = require('highlight.js');
+const md = require('markdown-it')({
+    highlight: function (str: string, lang: string) {
+        if (lang && hljs.getLanguage(lang)) {
+        try {
+            return hljs.highlight(lang, str).value;
+        } catch (__) {}
+        }
+
+        return ''; // use external default escaping
+    }
+});
+
 window.addEventListener('load', () => {
 
     let mouseDown = false;
@@ -69,8 +82,11 @@ const generateAndSetSVG = (
     colors: string[],
     points: number[][]
 ) => {
-    const svg = generateSVG(colors, points);    
-    svgCodeContainer.innerText = format(svg, {indentation: '  '});
+    const svg = generateSVG(colors, points);
+    const formatted = format(svg, {indentation: '  '});
+    const result = md.render('``` xml\n' + formatted + '\n```');
+    console.log(result);
+    svgCodeContainer.innerHTML = result;
     svgPreviewContainer.innerHTML = svg;
 }
 
