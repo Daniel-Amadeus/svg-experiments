@@ -210,7 +210,7 @@ const generateGradient = (
     let hy0 = y1 * -r + y1 + y2 * r || y1;
 
     return `
-    <linearGradient id="gradient0" gradientUnits="userSpaceOnUse" x1="${x0}" y1="${y0}" x2="${hx0}" y2="${hy0}">
+    <linearGradient id="gradient${index}" gradientUnits="userSpaceOnUse" x1="${x0}" y1="${y0}" x2="${hx0}" y2="${hy0}">
         <stop offset="0" stop-color="${colors[index]}" />
         <stop offset="1" stop-color="#000" />
     </linearGradient>
@@ -228,7 +228,7 @@ const generateGammaSVG = (
     const x2 = points[2][0];
     const y2 = points[2][1];
 
-    const defs = `
+    let defs = `
         <filter id="gamma" x="0" y="0" width="100%" height="100%">
             <feComponentTransfer>
             <feFuncR
@@ -242,14 +242,21 @@ const generateGammaSVG = (
             />
             </feComponentTransfer>
         </filter>
-    `
-        + generateGradient(colors, points, 1);
-
-    const triangle = `
-        <g>
-            <path d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z" fill="url(#gradient0)"/>
-        </g>
     `;
+    for (let i = 0; i < points.length; i++) {
+        defs += generateGradient(colors, points, i);
+    }
+
+    let triangle = '<g>';
+    for (let i = 0; i < points.length; i++) {
+        triangle +=
+            `<path
+                d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z"
+                fill="url(#gradient${i})"
+                style="mix-blend-mode:screen;filter:url(#gamma);"
+            />`
+    }
+    triangle += '</g>';
 
     let svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
