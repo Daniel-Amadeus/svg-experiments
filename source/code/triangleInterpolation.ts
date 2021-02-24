@@ -28,7 +28,7 @@ window.addEventListener('load', () => {
             function: generateBlurSVG
         },
         {
-            name: 'Blur2',
+            name: 'Gamma',
             function: generateGammaSVG
         }
     ];
@@ -42,6 +42,7 @@ window.addEventListener('load', () => {
         'Generator',
         generators.map((generator) => { return generator.name })
     );
+    generatorInput.selectedIndex = selectedGenerator;
     generatorInput.addEventListener('change', (event) => {
         selectedGenerator = (event.target as HTMLSelectElement).selectedIndex;
         generateAndSetSVG(
@@ -193,43 +194,42 @@ const generateGammaSVG = (
     colors: string[],
     points: number[][]
 ) => {
-    const m = points[0][0];
-    const n = points[0][1];
-    const o = points[1][0];
-    const p = points[1][1];
-    const q = points[2][0];
-    const r = points[2][1];
+    const x0 = points[0][0];
+    const y0 = points[0][1];
+    const x1 = points[1][0];
+    const y1 = points[1][1];
+    const x2 = points[2][0];
+    const y2 = points[2][1];
 
-    let a = o - m;
-    let b = p - n;
-    let c = -(m + o - 2 * q) / Math.sqrt(3);
-    let d = -(n + p - 2 * r) / Math.sqrt(3);
-    let e = m;
-    let f = n;
+    const r = (x1 * x1 - x1 * x2 + x0 * (x2 - x1) - (y0 - y1) * (y1 - y2))
+        / (x1 * x1 + y1 * y1 - 2 * x1 * x2 + x2 * x2 - 2 * y1 * y2 + y2 * y2);
 
-    let transform = 'matrix(' + a + ' ' + b + ' ' + c + ' ' + d + ' ' + e + ' ' + f + ')';
+    const hx0 = x1 * -r + x1 + x2 * r;
+    const hy0 = y1 * -r + y1 + y2 * r;
 
     const defs = `
-        <filter id="blur">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.05" />
+        <filter id="gamma" x="0" y="0" width="100%" height="100%">
+            <feComponentTransfer>
+            <feFuncR
+                type="gamma" amplitude="1" exponent="0.45454545" offset="0"
+            />
+            <feFuncG
+                type="gamma" amplitude="1" exponent="0.45454545" offset="0"
+            />
+            <feFuncB
+                type="gamma" amplitude="1" exponent="0.45454545" offset="0"
+            />
+            </feComponentTransfer>
         </filter>
-        <path id="triangle" fill="#000" d="M 0 0 h 1 l -0.5 0.866 Z"/>
-        <path id="segment" d="M 0.5 0.289 L 0.5 -0.577 L -1 -0.577 L -0.25 0.722 Z" />
-        <clipPath id="clipTri">
-            <use href="#triangle"/>
-        </clipPath>
-        <g id="segments">
-            <use href="#segment" fill="${colors[0]}"/>
-            <use href="#segment" fill="${colors[1]}" transform="rotate(120 0.5 0.289)"/>
-            <use href="#segment" fill="${colors[2]}" transform="rotate(240 0.5 0.289)"/>
-        </g>
+        <linearGradient id="gradient0" gradientUnits="userSpaceOnUse" x1="${x0}" y1="${y0}" x2="${hx0}" y2="${hy0}">
+            <stop offset="0" stop-color="${colors[0]}" />
+            <stop offset="1" stop-color="#000" />
+        </linearGradient>
     `;
 
     const triangle = `
-        <g id="colorTri" clip-path="url(#clipTri)" transform="${transform}">
-            <g filter="url(#blur)">
-                <use href="#segments"/>
-            </g>
+        <g>
+            <path d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z" fill="url(#gradient0)"/>
         </g>
     `;
 
@@ -239,7 +239,8 @@ const generateGammaSVG = (
                 ${defs}
             </defs>
             ${triangle}
-        </svg>`;
+        </svg>
+    `;
 
     return svg;
 }
