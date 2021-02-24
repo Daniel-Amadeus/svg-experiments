@@ -204,8 +204,8 @@ const generateGammaSVG = (
     const r = (x1 * x1 - x1 * x2 + x0 * (x2 - x1) - (y0 - y1) * (y1 - y2))
         / (x1 * x1 + y1 * y1 - 2 * x1 * x2 + x2 * x2 - 2 * y1 * y2 + y2 * y2);
 
-    const hx0 = x1 * -r + x1 + x2 * r;
-    const hy0 = y1 * -r + y1 + y2 * r;
+    let hx0 = x1 * -r + x1 + x2 * r || x1;
+    let hy0 = y1 * -r + y1 + y2 * r || y1;
 
     const defs = `
         <filter id="gamma" x="0" y="0" width="100%" height="100%">
