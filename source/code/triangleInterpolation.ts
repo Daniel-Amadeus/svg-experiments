@@ -190,6 +190,33 @@ const generateBlurSVG = (
     return svg;
 }
 
+const generateGradient = (
+    colors: string[],
+    points: number[][],
+    index: number
+): string => {
+
+    const x0 = points[(index + 0) % 3][0];
+    const y0 = points[(index + 0) % 3][1];
+    const x1 = points[(index + 1) % 3][0];
+    const y1 = points[(index + 1) % 3][1];
+    const x2 = points[(index + 2) % 3][0];
+    const y2 = points[(index + 2) % 3][1];
+
+    const r = (x1 * x1 - x1 * x2 + x0 * (x2 - x1) - (y0 - y1) * (y1 - y2))
+        / (x1 * x1 + y1 * y1 - 2 * x1 * x2 + x2 * x2 - 2 * y1 * y2 + y2 * y2);
+
+    let hx0 = x1 * -r + x1 + x2 * r || x1;
+    let hy0 = y1 * -r + y1 + y2 * r || y1;
+
+    return `
+    <linearGradient id="gradient0" gradientUnits="userSpaceOnUse" x1="${x0}" y1="${y0}" x2="${hx0}" y2="${hy0}">
+        <stop offset="0" stop-color="${colors[index]}" />
+        <stop offset="1" stop-color="#000" />
+    </linearGradient>
+    `;
+}
+
 const generateGammaSVG = (
     colors: string[],
     points: number[][]
@@ -200,12 +227,6 @@ const generateGammaSVG = (
     const y1 = points[1][1];
     const x2 = points[2][0];
     const y2 = points[2][1];
-
-    const r = (x1 * x1 - x1 * x2 + x0 * (x2 - x1) - (y0 - y1) * (y1 - y2))
-        / (x1 * x1 + y1 * y1 - 2 * x1 * x2 + x2 * x2 - 2 * y1 * y2 + y2 * y2);
-
-    let hx0 = x1 * -r + x1 + x2 * r || x1;
-    let hy0 = y1 * -r + y1 + y2 * r || y1;
 
     const defs = `
         <filter id="gamma" x="0" y="0" width="100%" height="100%">
@@ -221,11 +242,8 @@ const generateGammaSVG = (
             />
             </feComponentTransfer>
         </filter>
-        <linearGradient id="gradient0" gradientUnits="userSpaceOnUse" x1="${x0}" y1="${y0}" x2="${hx0}" y2="${hy0}">
-            <stop offset="0" stop-color="${colors[0]}" />
-            <stop offset="1" stop-color="#000" />
-        </linearGradient>
-    `;
+    `
+        + generateGradient(colors, points, 1);
 
     const triangle = `
         <g>
