@@ -30,6 +30,10 @@ window.addEventListener('load', () => {
         {
             name: 'Gamma',
             function: generateGammaSVG
+        },
+        {
+            name: 'Composite',
+            function: generateCompositeSVG
         }
     ];
 
@@ -264,6 +268,73 @@ const generateGammaSVG = (
                 ${defs}
             </defs>
             ${triangle}
+        </svg>
+    `;
+
+    return svg;
+}
+
+const generateCompositeSVG = (
+    colors: string[],
+    points: number[][]
+) => {
+    const x0 = points[0][0];
+    const y0 = points[0][1];
+    const x1 = points[1][0];
+    const y1 = points[1][1];
+    const x2 = points[2][0];
+    const y2 = points[2][1];
+
+    let defs = '';
+    for (let i = 0; i < points.length; i++) {
+        defs += generateGradient(colors, points, i);
+    }
+    defs +=
+        `<path
+            id="triangle0"
+            d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z"
+            fill="url(#gradient0)"
+        />`;
+    defs += `
+        <filter id="lighterFilter0" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+            <feImage xlink:href="#triangle0"/>
+            <feComposite in2="SourceGraphic" operator="lighter"/>
+        </filter>
+    `;
+    defs +=
+        `<path
+            id="triangle1"
+            d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z"
+            fill="url(#gradient1)"
+            style="filter:url(#lighterFilter0)"
+        />`;
+    defs += `
+        <filter id="lighterFilter1" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+            <feImage xlink:href="#triangle1"/>
+            <feComposite in2="SourceGraphic" operator="lighter"/>
+        </filter>
+    `;
+
+    let triangles = [];
+    for (let i = 0; i < points.length; i++) {
+        triangles.push(
+            `<path
+                d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z"
+                fill="url(#gradient${i})"
+            />`
+        );
+    }
+
+    let svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+                ${defs}
+            </defs>
+            <path
+                d="M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} Z"
+                fill="url(#gradient2)"
+                style="filter:url(#lighterFilter1)"
+            />
         </svg>
     `;
 
